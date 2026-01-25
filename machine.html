@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SecurePayToPrint - Machine</title>
+  <link rel="stylesheet" href="machine.css">
+</head>
+<body>
+
+<div class="machine-container">
+
+  <!-- 1. WAITING FOR UPLOAD (QR SCREEN) -->
+  <div class="card" id="qrSection">
+    <h2>Scan QR to Upload Document</h2>
+    <img src="UploadFileQR1-1024.jpeg" class="qr-img">
+  </div>
+
+  <!-- 2. PRINT OPTIONS -->
+  <div class="card hidden" id="optionsSection">
+    <h2>Document Detected</h2>
+    <p>Pages: <span id="pages">0</span></p>
+
+    <div class="radio-group">
+      <label>
+        <input type="radio" name="type" value="bw" checked> Black & White (₹1/page)
+      </label>
+      <label>
+        <input type="radio" name="type" value="color"> Color (₹3/page)
+      </label>
+    </div>
+
+    <div>
+      Copies:
+      <input type="number" id="copies" min="1" value="1">
+    </div>
+
+    <div class="amount-box">
+      PAY: ₹<span id="amount">0</span>
+    </div>
+
+    <button id="proceedPayment">Proceed to Payment</button>
+  </div>
+
+  <!-- 3. PAYMENT QR -->
+  <div class="card hidden" id="paymentSection">
+    <h2>Scan to Pay</h2>
+    <h3>PAY: ₹<span id="payAmountText">0</span></h3>
+    <img src="GooglePay_QR.png" class="qr-img">
+
+    <p>Time left: <span id="paymentTimer">120</span> seconds</p>
+
+    <!-- Demo button -->
+    <button id="confirmPayment">I Have Paid (Demo)</button>
+
+    <!-- REAL PAYMENT PLACEHOLDER -->
+    <!--
+      TODO:
+      Integrate Razorpay / Stripe / UPI gateway here.
+      Payment should auto-confirm via webhook.
+    -->
+  </div>
+
+  <!-- 4. PRINTING SCREEN -->
+  <div class="card hidden" id="printingSection">
+    <h2>Payment Complete</h2>
+    <p>Printing pages: <span id="printPagesText">0</span></p>
+    <p>Time Remaining: <span id="printTimer">0</span> sec</p>
+
+    <!-- REAL PRINTER PLACEHOLDER -->
+    <!--
+      TODO:
+      Replace countdown with printer hardware feedback.
+    -->
+  </div>
+
+  <!-- 5. DONE SCREEN -->
+  <div class="card hidden" id="doneSection">
+    <h2>🖨 Printing Completed</h2>
+    <p>Please collect your printout</p>
+    <p>Thank you for using SecurePayToPrint</p>
+  </div>
+
+</div>
+
+<script src="machine.js"></script>
+</body>
+</html>

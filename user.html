@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SecurePayToPrint – Upload Document</title>
+  <link rel="stylesheet" href="user.css">
+</head>
+<body>
+
+<div class="container">
+
+  <h1>SecurePayToPrint</h1>
+  <p class="subtitle">
+    Upload your document securely.  
+    Files are deleted automatically after printing.
+  </p>
+
+  <!-- Upload Card -->
+  <div class="card">
+
+    <div class="upload-area" id="uploadArea">
+      <p id="uploadText">Click or Drop your file here</p>
+      <input type="file" id="fileInput" hidden>
+    </div>
+
+    <div class="file-info">
+      <p>Selected File: <span id="fileName">None</span></p>
+      <p>Detected Pages: <span id="pageCount">0</span></p>
+    </div>
+
+    <button id="uploadBtn">Upload & Continue</button>
+
+  </div>
+
+  <p class="security-note">
+    🔒 Your file is stored only temporarily and deleted after printing.
+  </p>
+
+</div>
+
+<script src="user.js"></script>
+</body>
+</html>
