@@ -2,97 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SecurePayToPrint - Machine</title>
+  <title>Print Vending Machine</title>
   <link rel="stylesheet" href="machine.css">
 </head>
 <body>
 
-<button id="backBtn" class="back-btn">⬅ Back</button>
 <div class="machine-container">
 
-  <!-- 1. WAITING FOR UPLOAD (QR SCREEN) -->
-  <div class="card qr-card" id="qrSection">
-  <h2>Scan to Upload Your Document</h2>
+  <!-- Back Button -->
+  <button id="backBtn" class="back-btn" style="display:none;">⬅ Back</button>
 
-  <div class="qr-wrapper">
+  <!-- QR SECTION -->
+  <div id="qrSection" class="card">
+    <h2>Scan to Upload Document</h2>
     <div id="qrCode"></div>
+    <p class="info-text">
+      Scan this QR and upload your file.  
+      Your file will be deleted automatically after printing.
+    </p>
   </div>
 
-  <p class="qr-hint">
-    Use your phone camera to scan and upload your file.<br>
-    Your document will be deleted after printing.
-  </p>
-</div>
+  <!-- OPTIONS SECTION -->
+  <div id="optionsSection" class="card" style="display:none;">
+    <h2>Print Options</h2>
 
+    <p>Pages Detected: <b><span id="detectedPages">0</span></b></p>
+    <p>Pages to be Printed: <b><span id="printPages">0</span></b></p>
 
-  <!-- 2. PRINT OPTIONS -->
-  <div class="card hidden" id="optionsSection">
-    <h2>Document Detected</h2>
-    <p>Pages: <span id="pages">0</span></p>
-
-    <div class="radio-group">
+    <div class="option-box">
       <label>
-        <input type="radio" name="type" value="bw" checked> Black & White (₹1/page)
+        <input type="radio" name="printType" value="bw" checked>
+        Black & White (₹1 / page)
       </label>
       <label>
-        <input type="radio" name="type" value="color"> Color (₹3/page)
+        <input type="radio" name="printType" value="color">
+        Color (₹3 / page)
       </label>
     </div>
 
-    <div>
-      Copies:
-      <input type="number" id="copies" min="1" value="1">
-    </div>
-    
-    <div class="amount-box">
-      PAY: ₹<span id="amount">0</span>
+    <div class="option-box">
+      <label>
+        Copies:
+        <input type="number" id="copiesInput" value="1" min="1" max="10">
+      </label>
     </div>
 
-    <button id="proceedPayment">Proceed to Payment</button>
+    <p class="amount-text">
+      Total Amount: ₹<span id="totalAmount">0</span>
+    </p>
+
+    <button id="proceedBtn" class="proceed-btn">
+      Proceed to Pay
+    </button>
   </div>
 
-  <!-- 3. PAYMENT QR -->
-  <div class="card hidden" id="paymentSection">
-    <h2>Scan to Pay</h2>
-    <h3>PAY: ₹<span id="payAmountText">0</span></h3>
-    <img src="GooglePay_QR.png" class="qr-img">
+  <!-- SUCCESS SECTION -->
+  <div id="successSection" class="card" style="display:none;">
+    <h2>Payment Done</h2>
+    <p>Please collect your printout.</p>
 
-    <p>Time left: <span id="paymentTimer">120</span> seconds</p>
-
-    <!-- Demo button -->
-    <button id="confirmPayment">I Have Paid (Demo)</button>
-
-    <!-- REAL PAYMENT PLACEHOLDER -->
     <!--
-      TODO:
-      Integrate Razorpay / Stripe / UPI gateway here.
-      Payment should auto-confirm via webhook.
+      REAL PAYMENT + COUNTDOWN LOGIC WILL GO HERE LATER:
+      - Start printer motor
+      - Countdown based on pages
+      - Show live progress
     -->
   </div>
 
-  <!-- 4. PRINTING SCREEN -->
-  <div class="card hidden" id="printingSection">
-    <h2>Payment Complete</h2>
-    <p>Printing pages: <span id="printPagesText">0</span></p>
-    <p>Time Remaining: <span id="printTimer">0</span> sec</p>
-
-    <!-- REAL PRINTER PLACEHOLDER -->
-    <!--
-      TODO:
-      Replace countdown with printer hardware feedback.
-    -->
-  </div>
-
-  <!-- 5. DONE SCREEN -->
-  <div class="card hidden" id="doneSection">
-    <h2>🖨 Printing Completed</h2>
-    <p>Please collect your printout</p>
-    <p>Thank you for using SecurePayToPrint</p>
-  </div>
-
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-
 <script src="machine.js"></script>
 </body>
 </html>
