@@ -34,6 +34,10 @@ let amount = 0;
 let paymentCountdownInterval = null;
 let printCountdownInterval = null;
 
+document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.reload();
+});
+
 // ===================================================
 // 1. WAIT FOR SESSION (POLLING BACKEND)
 // ===================================================
