@@ -4,6 +4,21 @@
   box-sizing: border-box;
   font-family: "Segoe UI", sans-serif;
 }
+.card {
+  background: #ffffff;
+  color: #111;
+}
+
+.card h1,
+.card h2,
+.card p,
+.card span,
+.card label {
+  color: #111;
+}
+.upload-box {
+  color: #222;
+}
 
 body {
   margin: 0;
