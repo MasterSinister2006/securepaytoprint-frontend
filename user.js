@@ -1,4 +1,4 @@
-const API_BASE = "https://securepaytoprint-backend.onrender.com";
+const API_BASE = "https://securepaytoprint-backend.onrender.com/admin/sessions";
 
 const fileInput = document.getElementById("fileInput");
 const uploadArea = document.getElementById("uploadArea");

@@ -1,5 +1,5 @@
 // frontend/machine.js
-const API_BASE = "https://securepaytoprint-backend.onrender.com";
+const API_BASE = "https://securepaytoprint-backend.onrender.com/admin/sessions";
 
 // Sections
 const qrSection = document.getElementById("qrSection");
