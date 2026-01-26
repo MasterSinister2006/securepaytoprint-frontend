@@ -24,6 +24,7 @@ const confirmPaymentBtn = document.getElementById("confirmPayment");
 const BW_PRICE = 1;
 const COLOR_PRICE = 3;
 const PRINT_TIME_PER_PAGE = 3; // seconds per page (DEMO RULE)
+const FRONTEND_BASE = "https://securepaytoprint-frontend.netlify.app";
 
 // State
 let currentSession = null;
@@ -37,6 +38,22 @@ let printCountdownInterval = null;
 document.getElementById("backBtn").addEventListener("click", () => {
   window.location.reload();
 });
+function generateUploadQR() {
+  const qrContainer = document.getElementById("qrCode");
+  qrContainer.innerHTML = "";
+
+  const uploadURL = `${FRONTEND_BASE}/user.html`;
+
+  new QRCode(qrContainer, {
+    text: uploadURL,
+    width: 180,
+    height: 180,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
 
 // ===================================================
 // 1. WAIT FOR SESSION (POLLING BACKEND)
@@ -114,6 +131,7 @@ function showDoneSection() {
 }
 
 // Initial state
+generateUploadQR();
 showQRSection();
 
 // ===================================================

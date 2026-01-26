@@ -11,10 +11,19 @@
 <div class="machine-container">
 
   <!-- 1. WAITING FOR UPLOAD (QR SCREEN) -->
-  <div class="card" id="qrSection">
-    <h2>Scan QR to Upload Document</h2>
-    <img src="UploadFileQR1-1024.jpeg" class="qr-img">
+  <div class="card qr-card" id="qrSection">
+  <h2>Scan to Upload Your Document</h2>
+
+  <div class="qr-wrapper">
+    <div id="qrCode"></div>
   </div>
+
+  <p class="qr-hint">
+    Use your phone camera to scan and upload your file.<br>
+    Your document will be deleted after printing.
+  </p>
+</div>
+
 
   <!-- 2. PRINT OPTIONS -->
   <div class="card hidden" id="optionsSection">
@@ -82,6 +91,7 @@
   </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 
 <script src="machine.js"></script>
 </body>
