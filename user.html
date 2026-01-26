@@ -2,26 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SecurePayToPrint – Upload</title>
+  <title>SecurePayToPrint - Upload</title>
   <link rel="stylesheet" href="user.css">
 </head>
 <body>
 
-<div class="main">
-  <h1>SecurePayToPrint</h1>
-  <p class="subtitle">Upload your document securely. Files are deleted after printing.</p>
+<div class="container">
 
-  <div class="card">
-    <input type="file" id="fileInput">
+  <!-- Upload Screen -->
+  <div class="card" id="uploadScreen">
+    <h2>Upload Your Document</h2>
+    <p class="subtext">Your file will be deleted after printing.</p>
+
+    <label class="upload-box">
+      <input type="file" id="fileInput" hidden>
+      <span>Select File</span>
+    </label>
+
     <p id="fileName">No file selected</p>
-    <p id="pages">Detected Pages: 0</p>
 
-    <button id="uploadBtn">Upload & Continue</button>
+    <button id="uploadBtn">Upload</button>
   </div>
 
-  <p class="footer-note">
-    🔒 Your file is stored only temporarily and deleted after printing.
-  </p>
+  <!-- Success Screen -->
+  <div class="card success" id="successScreen" style="display:none;">
+    <h2>Thank You!</h2>
+    <p>Your file has been uploaded successfully.</p>
+
+    <p><b>File:</b> <span id="successFileName"></span></p>
+    <p><b>Pages Detected:</b> <span id="successPages"></span></p>
+
+    <button id="backBtn">⬅ Upload Another File</button>
+  </div>
+
 </div>
 
 <script src="user.js"></script>

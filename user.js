@@ -1,22 +1,30 @@
 const API_BASE = "https://securepaytoprint-backend.onrender.com";
 
 const fileInput = document.getElementById("fileInput");
-const fileName = document.getElementById("fileName");
-const pagesText = document.getElementById("pages");
 const uploadBtn = document.getElementById("uploadBtn");
+const fileNameText = document.getElementById("fileName");
+
+const uploadScreen = document.getElementById("uploadScreen");
+const successScreen = document.getElementById("successScreen");
+
+const successFileName = document.getElementById("successFileName");
+const successPages = document.getElementById("successPages");
+const backBtn = document.getElementById("backBtn");
 
 let selectedFile = null;
 
+// File selection
 fileInput.addEventListener("change", () => {
   selectedFile = fileInput.files[0];
-  if (selectedFile) {
-    fileName.textContent = "Selected: " + selectedFile.name;
-  }
+  fileNameText.innerText = selectedFile
+    ? selectedFile.name
+    : "No file selected";
 });
 
+// Upload
 uploadBtn.addEventListener("click", async () => {
   if (!selectedFile) {
-    alert("Please select a file first");
+    alert("Please select a file first.");
     return;
   }
 
@@ -29,14 +37,29 @@ uploadBtn.addEventListener("click", async () => {
       body: formData
     });
 
-    if (!res.ok) throw new Error("Server error");
+    if (!res.ok) throw new Error("Upload failed");
 
     const data = await res.json();
-    pagesText.textContent = "Detected Pages: " + data.pages;
-    alert("Upload successful. Session ID: " + data.sessionId);
+
+    // Switch UI
+    uploadScreen.style.display = "none";
+    successScreen.style.display = "block";
+
+    successFileName.innerText = selectedFile.name;
+    successPages.innerText = data.pages;
 
   } catch (err) {
     console.error(err);
     alert("Unable to connect to server.");
   }
+});
+
+// Back to upload
+backBtn.addEventListener("click", () => {
+  selectedFile = null;
+  fileInput.value = "";
+  fileNameText.innerText = "No file selected";
+
+  successScreen.style.display = "none";
+  uploadScreen.style.display = "block";
 });
