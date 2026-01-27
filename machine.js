@@ -1,19 +1,27 @@
+// ================= BASIC CONFIG =================
 const API_BASE = "https://securepaytoprint-backend.onrender.com";
 const FRONTEND_BASE = "https://securepaytoprint-frontend.netlify.app";
 
+// ================= DOM ELEMENTS =================
 const qrSection = document.getElementById("qrSection");
 const optionsSection = document.getElementById("optionsSection");
 const successSection = document.getElementById("successSection");
 
 const backBtn = document.getElementById("backBtn");
-const detectedPagesSpan = document.getElementById("detectedPages");
-const printPagesSpan = document.getElementById("printPages");
-const totalAmountSpan = document.getElementById("totalAmount");
+
+const fileNameText = document.getElementById("fileNameText");
+const detectedPagesText = document.getElementById("detectedPages");
+const printPagesText = document.getElementById("printPages");
+
+const totalAmountText = document.getElementById("totalAmount");
 const copiesInput = document.getElementById("copiesInput");
+const proceedBtn = document.getElementById("proceedBtn");
 
+// ================= STATE =================
 let currentSession = null;
+let pollingInterval = null;
 
-// Generate dynamic QR
+// ================= QR GENERATION =================
 function generateUploadQR() {
   const qrContainer = document.getElementById("qrCode");
   qrContainer.innerHTML = "";
@@ -23,93 +31,122 @@ function generateUploadQR() {
   new QRCode(qrContainer, {
     text: uploadURL,
     width: 180,
-    height: 180
+    height: 180,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
   });
 }
 
-// Section control
-function showQRSection() {
-  qrSection.style.display = "block";
-  optionsSection.style.display = "none";
-  successSection.style.display = "none";
+// ================= UI CONTROL =================
+function showQRScreen() {
+  qrSection.classList.add("active");
+  optionsSection.classList.remove("active");
+  successSection.classList.remove("active");
+
   backBtn.style.display = "none";
+  currentSession = null;
 }
 
-function showOptionsSection(session) {
-  qrSection.style.display = "none";
-  optionsSection.style.display = "block";
-  successSection.style.display = "none";
+function showOptionsScreen(session) {
+  qrSection.classList.remove("active");
+  optionsSection.classList.add("active");
+  successSection.classList.remove("active");
+
   backBtn.style.display = "block";
 
-  const pages = session.pages;
+  // Set values
+  fileNameText.innerText = session.fileName || "Unknown File";
+  detectedPagesText.innerText = session.pages;
+  printPagesText.innerText = session.pages;
 
-  if (pages > 150) {
-    alert("Maximum 150 pages allowed.");
-    showQRSection();
+  // Enforce 150 page limit
+  if (session.pages > 150) {
+    alert("Maximum 150 pages allowed per print job. Please upload a smaller file.");
+    showQRScreen();
     return;
   }
 
-  detectedPagesSpan.innerText = pages;
-  printPagesSpan.innerText = pages;
   calculateAmount();
 }
 
-function showSuccessSection() {
-  qrSection.style.display = "none";
-  optionsSection.style.display = "none";
-  successSection.style.display = "block";
+function showSuccessScreen() {
+  qrSection.classList.remove("active");
+  optionsSection.classList.remove("active");
+  successSection.classList.add("active");
+
   backBtn.style.display = "block";
 }
 
-// Amount calculation
+// ================= AMOUNT CALCULATION =================
 function calculateAmount() {
-  const pages = Number(detectedPagesSpan.innerText);
+  const pages = Number(detectedPagesText.innerText);
   const copies = Number(copiesInput.value);
   const type = document.querySelector("input[name='printType']:checked").value;
 
-  let price = type === "bw" ? 1 : 3;
-  const total = pages * copies * price;
-  totalAmountSpan.innerText = total;
+  let pricePerPage = type === "bw" ? 1 : 3;
+
+  const total = pages * copies * pricePerPage;
+  totalAmountText.innerText = total;
 }
 
-// Poll server
-async function checkForSession() {
+// ================= BACK BUTTON =================
+backBtn.addEventListener("click", () => {
+  /*
+    IMPORTANT:
+    Back button must NOT reload the page.
+    It should just bring the machine back to QR screen.
+  */
+  showQRScreen();
+});
+
+// ================= SESSION POLLING =================
+async function pollForSession() {
   try {
     const res = await fetch(`${API_BASE}/admin/sessions`);
     const sessions = await res.json();
 
-    if (sessions.length > 0 && !currentSession) {
-      currentSession = sessions[sessions.length - 1];
-      showOptionsSection(currentSession);
+    if (sessions.length > 0) {
+      const latest = sessions[sessions.length - 1];
+
+      if (!currentSession || currentSession.sessionId !== latest.sessionId) {
+        currentSession = latest;
+        showOptionsScreen(latest);
+      }
     }
   } catch (err) {
-    console.error("Server not reachable from machine");
+    console.error("Unable to reach backend from machine:", err);
   }
 }
 
-setInterval(checkForSession, 2000);
+function startPolling() {
+  pollingInterval = setInterval(pollForSession, 2000);
+}
 
-// Events
+// ================= EVENTS =================
 document.querySelectorAll("input[name='printType']").forEach(radio => {
   radio.addEventListener("change", calculateAmount);
 });
 
 copiesInput.addEventListener("input", calculateAmount);
 
-document.getElementById("proceedBtn").addEventListener("click", () => {
+proceedBtn.addEventListener("click", () => {
   /*
-    REAL PAYMENT LOGIC WILL GO HERE:
-    - Show payment QR
-    - Verify payment
-    - Start countdown based on pages
+    =================== PAYMENT FLOW (FUTURE) ===================
+    1. Show Payment QR
+    2. Wait for confirmation from payment gateway API
+    3. Once verified:
+       - Start countdown based on pages
+       - Trigger printing
+       - Show progress
+    =============================================================
   */
-  showSuccessSection();
+
+  // DEMO MODE:
+  showSuccessScreen();
 });
 
-backBtn.addEventListener("click", () => {
-  window.location.reload();
-});
-
-// Init
+// ================= INITIALIZE =================
 generateUploadQR();
-showQRSection();
+showQRScreen();
+startPolling();

@@ -2,71 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Print Vending Machine</title>
+  <title>SecurePayToPrint – Machine</title>
   <link rel="stylesheet" href="machine.css">
 </head>
 <body>
 
-<div class="machine-container">
+<div class="mobile-frame">
 
-  <!-- Back Button -->
-  <button id="backBtn" class="back-btn" style="display:none;">⬅ Back</button>
+  <!-- Back Button (hidden on QR, shown on selection & success) -->
+  <button id="backBtn" class="back-btn" style="display:none;">⬅</button>
 
-  <!-- QR SECTION -->
-  <div id="qrSection" class="card">
-    <h2>Scan to Upload Document</h2>
-    <div id="qrCode"></div>
-    <p class="info-text">
-      Scan this QR and upload your file.  
-      Your file will be deleted automatically after printing.
+  <!-- ================= QR SCREEN ================= -->
+  <div class="glass-card active" id="qrSection">
+    <h2 class="title">Scan to Upload</h2>
+
+    <div class="qr-box">
+      <div id="qrCode"></div>
+    </div>
+
+    <p class="hint">
+      Scan this QR using your phone to upload your document.  
+      Files are deleted immediately after printing.
     </p>
   </div>
 
-  <!-- OPTIONS SECTION -->
-  <div id="optionsSection" class="card" style="display:none;">
-    <h2>Print Options</h2>
+  <!-- ================= OPTIONS SCREEN ================= -->
+  <div class="glass-card" id="optionsSection">
+    <h2 class="title">Print Settings</h2>
 
-    <p>Pages Detected: <b><span id="detectedPages">0</span></b></p>
-    <p>Pages to be Printed: <b><span id="printPages">0</span></b></p>
+    <div class="info-box">
+      <p><b>File:</b> <span id="fileNameText">---</span></p>
+      <p><b>Pages:</b> <span id="detectedPages">0</span></p>
+      <p><b>To Print:</b> <span id="printPages">0</span></p>
+    </div>
 
-    <div class="option-box">
-      <label>
+    <div class="radio-group">
+      <label class="radio-card">
         <input type="radio" name="printType" value="bw" checked>
-        Black & White (₹1 / page)
+        <span>🖤 Black & White</span>
+        <small>₹1 / page</small>
       </label>
-      <label>
+
+      <label class="radio-card">
         <input type="radio" name="printType" value="color">
-        Color (₹3 / page)
+        <span>🎨 Color Print</span>
+        <small>₹3 / page</small>
       </label>
     </div>
 
-    <div class="option-box">
-      <label>
-        Copies:
-        <input type="number" id="copiesInput" value="1" min="1" max="10">
-      </label>
+    <div class="copies-box">
+      <label>Copies</label>
+      <input type="number" id="copiesInput" value="1" min="1" max="10">
     </div>
 
-    <p class="amount-text">
-      Total Amount: ₹<span id="totalAmount">0</span>
-    </p>
+    <div class="amount-box">
+      Total: ₹<span id="totalAmount">0</span>
+    </div>
 
-    <button id="proceedBtn" class="proceed-btn">
-      Proceed to Pay
-    </button>
+    <button id="proceedBtn" class="action-btn">Proceed to Pay</button>
   </div>
 
-  <!-- SUCCESS SECTION -->
-  <div id="successSection" class="card" style="display:none;">
-    <h2>Payment Done</h2>
-    <p>Please collect your printout.</p>
-
-    <!--
-      REAL PAYMENT + COUNTDOWN LOGIC WILL GO HERE LATER:
-      - Start printer motor
-      - Countdown based on pages
-      - Show live progress
-    -->
+  <!-- ================= SUCCESS SCREEN ================= -->
+  <div class="glass-card" id="successSection">
+    <h2 class="title">Payment Done</h2>
+    <p class="success-text">🖨 Printing started…</p>
+    <p class="success-text">Please collect your printout.</p>
   </div>
 
 </div>
