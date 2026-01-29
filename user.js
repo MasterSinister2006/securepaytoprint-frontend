@@ -1,4 +1,5 @@
 const API_BASE = "https://securepaytoprint-backend.onrender.com";
+let uploadLocked = false;
 
 const fileInput = document.getElementById("fileInput");
 const uploadBtn = document.getElementById("uploadBtn");
@@ -23,8 +24,8 @@ fileInput.addEventListener("change", () => {
 
 // Upload
 uploadBtn.addEventListener("click", async () => {
-  if (!selectedFile) {
-    alert("Please select a file first.");
+  if (uploadLocked) {
+    alert("Please wait until machine is ready.");
     return;
   }
 

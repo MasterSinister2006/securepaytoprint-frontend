@@ -91,14 +91,11 @@ function calculateAmount() {
 }
 
 // ================= BACK BUTTON =================
-backBtn.addEventListener("click", () => {
-  /*
-    IMPORTANT:
-    Back button must NOT reload the page.
-    It should just bring the machine back to QR screen.
-  */
+backBtn.addEventListener("click", async () => {
+  await fetch(`${API_BASE}/reset-session`, { method: "POST" });
   showQRScreen();
 });
+
 
 // ================= SESSION POLLING =================
 async function pollForSession() {
@@ -130,21 +127,24 @@ document.querySelectorAll("input[name='printType']").forEach(radio => {
 
 copiesInput.addEventListener("input", calculateAmount);
 
-proceedBtn.addEventListener("click", () => {
-  /*
-    =================== PAYMENT FLOW (FUTURE) ===================
-    1. Show Payment QR
-    2. Wait for confirmation from payment gateway API
-    3. Once verified:
-       - Start countdown based on pages
-       - Trigger printing
-       - Show progress
-    =============================================================
-  */
-
-  // DEMO MODE:
+proceedBtn.addEventListener("click", async () => {
   showSuccessScreen();
+
+  setTimeout(async () => {
+    await fetch(`${API_BASE}/reset-session`, { method: "POST" });
+    showQRScreen();
+  }, 3000);
+
+  /*
+    REAL PAYMENT FLOW:
+    - Show QR
+    - Verify transaction
+    - Start printer
+    - Countdown based on pages
+  */
 });
+
+
 
 // ================= INITIALIZE =================
 generateUploadQR();

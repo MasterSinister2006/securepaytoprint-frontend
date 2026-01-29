@@ -1,108 +1,128 @@
-// ================= ADMIN DASHBOARD LOGIC =================
+// admin.js
+// ================== CONFIG ==================
+const API_BASE = "https://securepaytoprint-backend.onrender.com";
 
-// Auto load dashboard
-window.onload = () => {
-  loadDashboardStats();
-  loadPrinterStatus();
-  loadOrders();
-  setInterval(loadPrinterStatus, 5000);   // refresh printer status every 5 sec
-  setInterval(loadOrders, 5000);          // refresh orders every 5 sec
-};
+// ================== DOM ELEMENTS ==================
+const resetMachineBtn = document.getElementById("resetMachineBtn");
+const toggleMachineBtn = document.getElementById("toggleMachineBtn");
 
-// ================= VIEW SWITCHING =================
-function showView(view) {
-  document.querySelectorAll(".view").forEach(v => v.classList.add("hidden"));
-  document.getElementById(view + "View").classList.remove("hidden");
+const machineStatusEl = document.getElementById("machineStatus");
+const machineModeEl = document.getElementById("machineMode");
 
-  document.querySelectorAll(".sidebar ul li").forEach(li => li.classList.remove("active"));
-  event.target.classList.add("active");
+const currentSessionBox = document.getElementById("currentSessionBox");
+
+// ================== GLOBAL STATE ==================
+let machineEnabled = true;
+
+// ================== MACHINE STATUS ==================
+async function fetchMachineStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/machine/status`);
+    const data = await res.json();
+
+    machineEnabled = data.enabled;
+    updateMachineModeUI();
+  } catch (err) {
+    console.error("Failed to fetch machine status:", err);
+    machineModeEl.innerText = "ERROR";
+    machineModeEl.style.color = "red";
+  }
 }
 
-// ================= DASHBOARD =================
-function loadDashboardStats() {
-  fetch("/admin/summary/today")
-    .then(res => res.json())
-    .then(data => {
-      let totalOrders = 0;
-      let totalRevenue = 0;
-
-      data.forEach(p => {
-        totalOrders++;
-        totalRevenue += p.revenue;
-      });
-
-      document.getElementById("totalOrders").innerText = totalOrders;
-      document.getElementById("totalRevenue").innerText = totalRevenue;
-    });
-
-  fetch("/admin/printer-status")
-    .then(res => res.json())
-    .then(data => {
-      const active = data.filter(p => p.paper > 0).length;
-      document.getElementById("activePrinters").innerText = active;
-    });
+function updateMachineModeUI() {
+  if (machineEnabled) {
+    machineModeEl.innerText = "ACTIVE";
+    machineModeEl.style.color = "lime";
+    toggleMachineBtn.innerText = "Disable Machine";
+    toggleMachineBtn.style.background = "#ff1744";
+  } else {
+    machineModeEl.innerText = "MAINTENANCE";
+    machineModeEl.style.color = "orange";
+    toggleMachineBtn.innerText = "Enable Machine";
+    toggleMachineBtn.style.background = "#00e676";
+  }
 }
 
-// ================= PRINTER STATUS =================
-function loadPrinterStatus() {
-  fetch("/admin/printer-status")
-    .then(res => res.json())
-    .then(printers => {
-      const container = document.getElementById("printerCards");
-      container.innerHTML = "";
-
-      printers.forEach(p => {
-        let statusClass = "green";
-
-        if (p.paper <= 0 || (p.black_ink <= 0 && p.color_ink <= 0)) {
-          statusClass = "red";
-        } else if (p.paper < 10 || p.black_ink < 10 || p.color_ink < 10) {
-          statusClass = "yellow";
-        }
-
-        const card = document.createElement("div");
-        card.className = `printer-card ${statusClass}`;
-        card.innerHTML = `
-          <h3>${p.printer_id}</h3>
-          <p>Paper: ${p.paper}</p>
-          <p>Black Ink: ${p.black_ink.toFixed(1)}</p>
-          <p>Color Ink: ${p.color_ink.toFixed(1)}</p>
-        `;
-        container.appendChild(card);
-      });
+// ================== TOGGLE MACHINE ==================
+toggleMachineBtn.addEventListener("click", async () => {
+  try {
+    await fetch(`${API_BASE}/admin/machine-toggle`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ enabled: !machineEnabled })
     });
+    fetchMachineStatus();
+  } catch (err) {
+    alert("Unable to toggle machine status");
+  }
+});
+
+// ================== EMERGENCY RESET ==================
+resetMachineBtn.addEventListener("click", async () => {
+  if (!confirm("This will stop current printing and reset the vending machine. Continue?")) return;
+
+  try {
+    await fetch(`${API_BASE}/admin/reset-machine`, {
+      method: "POST"
+    });
+    alert("Machine reset successfully.");
+  } catch (err) {
+    alert("Failed to reset machine");
+  }
+});
+
+// ================== CURRENT SESSION VIEW ==================
+async function loadCurrentSession() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/current-session`);
+    const data = await res.json();
+
+    if (!data) {
+      currentSessionBox.innerHTML = "<p>No active session</p>";
+    } else {
+      currentSessionBox.innerHTML = `
+        <p><b>File:</b> ${data.fileName}</p>
+        <p><b>Pages:</b> ${data.pages}</p>
+        <p><b>Session ID:</b> ${data.sessionId}</p>
+        <p><b>Started:</b> ${new Date(data.createdAt).toLocaleTimeString()}</p>
+      `;
+    }
+  } catch (err) {
+    currentSessionBox.innerHTML = "<p style='color:red'>Failed to fetch session</p>";
+  }
 }
 
-// ================= ORDERS =================
-function loadOrders() {
-  const today = new Date().toISOString().split("T")[0];
+// ================== MACHINE BUSY STATUS ==================
+async function fetchBusyStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/status`);
+    const data = await res.json();
 
-  fetch(`/admin/orders?date=${today}`)
-    .then(res => res.json())
-    .then(orders => {
-      const table = document.getElementById("ordersTable");
-      table.innerHTML = "";
-
-      orders.forEach(o => {
-        const tr = document.createElement("tr");
-
-        // Default status logic (you can refine later)
-        let status = "done"; // backend can later manage real-time state
-        let statusText = "DONE";
-
-        const statusHTML = `<span class="status ${status}">${statusText}</span>`;
-
-        tr.innerHTML = `
-          <td>${o.token}</td>
-          <td>${o.phone || "N/A"}</td>
-          <td>${o.printer_id}</td>
-          <td>${o.pages}</td>
-          <td>${o.print_type.toUpperCase()}</td>
-          <td>₹${o.amount}</td>
-          <td>${statusHTML}</td>
-          <td>${new Date(o.time).toLocaleTimeString()}</td>
-        `;
-        table.appendChild(tr);
-      });
-    });
+    if (data.printerBusy) {
+      machineStatusEl.innerText = "BUSY";
+      machineStatusEl.style.color = "red";
+    } else {
+      machineStatusEl.innerText = "IDLE";
+      machineStatusEl.style.color = "lime";
+    }
+  } catch (err) {
+    machineStatusEl.innerText = "ERROR";
+    machineStatusEl.style.color = "orange";
+  }
 }
+
+// ================== AUTO REFRESH ==================
+function startAdminMonitoring() {
+  fetchMachineStatus();
+  fetchBusyStatus();
+  loadCurrentSession();
+
+  setInterval(() => {
+    fetchMachineStatus();
+    fetchBusyStatus();
+    loadCurrentSession();
+  }, 2000);
+}
+
+// ================== INIT ==================
+startAdminMonitoring();

@@ -22,8 +22,14 @@
 
   <!-- Main Content -->
   <div class="main">
-
+        <span id="machineStatus"></span>
+        <button id="toggleMachineBtn" class="danger-btn">
+        Disable Machine
+        </button>
+        <p>Machine Mode: <span id="machineMode">Loading...</span></p>
     <!-- DASHBOARD -->
+     <button id="resetMachineBtn" class="danger-btn">Reset Machine</button>
+     <div id="currentSessionBox" class="session-box"></div>
     <div id="dashboardView" class="view">
       <h1>Overview</h1>
       <div class="stats">
