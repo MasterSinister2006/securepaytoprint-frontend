@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard - Secure Pay To Print</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div class="admin-container">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <li onclick="showView('dashboard')" class="active">Dashboard</li>
+      <li onclick="showView('printers')">Printers</li>
+      <li onclick="showView('orders')">Orders</li>
+      <li onclick="showView('print')">Print Panel</li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+        <span id="machineStatus"></span>
+        <button id="toggleMachineBtn" class="danger-btn">
+        Disable Machine
+        </button>
+        <p>Machine Mode: <span id="machineMode">Loading...</span></p>
+    <!-- DASHBOARD -->
+     <button id="resetMachineBtn" class="danger-btn">Reset Machine</button>
+     <div id="currentSessionBox" class="session-box"></div>
+    <div id="dashboardView" class="view">
+      <h1>Overview</h1>
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Total Orders Today</h3>
+          <p id="totalOrders">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Revenue Today</h3>
+          <p>₹ <span id="totalRevenue">0</span></p>
+        </div>
+        <div class="stat-card">
+          <h3>Active Printers</h3>
+          <p id="activePrinters">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRINTERS -->
+    <div id="printersView" class="view hidden">
+      <h1>Printers Status</h1>
+      <div id="printerCards" class="printer-grid"></div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="ordersView" class="view hidden">
+      <h1>Orders</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Phone</th>
+            <th>Printer</th>
+            <th>Pages</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable"></tbody>
+      </table>
+    </div>
+
+    <!-- PRINT PANEL -->
+    <div id="printView" class="view hidden">
+      <h1>Admin Print Panel</h1>
+      <iframe src="/" frameborder="0"></iframe>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

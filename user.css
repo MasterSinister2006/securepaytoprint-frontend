@@ -1,0 +1,70 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.container {
+  width: 350px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.subtext {
+  font-size: 13px;
+  color: #cde9ff;
+}
+
+.upload-box {
+  display: block;
+  margin: 20px auto;
+  padding: 12px;
+  border: 2px dashed #4fc3f7;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #4fc3f7;
+}
+
+.upload-box:hover {
+  background: rgba(79,195,247,0.1);
+}
+
+#fileName {
+  font-size: 14px;
+  margin: 10px 0;
+  color: #d6f0ff;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #4fc3f7;
+  color: #002b36;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #29b6f6;
+}
+
+.success {
+  background: rgba(0,255,150,0.1);
+}

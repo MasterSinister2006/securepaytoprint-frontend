@@ -1,0 +1,184 @@
+/* ================= ADMIN DASHBOARD DARK THEME ================= */
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* Layout */
+.admin-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #020617;
+  padding: 20px;
+  border-right: 1px solid #1e293b;
+}
+
+.sidebar h2 {
+  color: #60a5fa;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #020617;
+  color: #cbd5f5;
+  transition: 0.2s;
+}
+
+.sidebar ul li:hover {
+  background: #1e293b;
+}
+
+.sidebar ul li.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.view {
+  animation: fadeIn 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Dashboard Stats */
+.stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stat-card {
+  flex: 1;
+  background: #020617;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(59,130,246,0.2);
+}
+
+.stat-card h3 {
+  margin: 0;
+  color: #93c5fd;
+  font-size: 16px;
+}
+
+.stat-card p {
+  font-size: 26px;
+  margin-top: 10px;
+  color: #38bdf8;
+}
+
+/* Printer Cards */
+.printer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.printer-card {
+  background: #020617;
+  border-radius: 14px;
+  padding: 15px;
+  border-left: 5px solid #22c55e;
+  transition: 0.3s;
+}
+
+.printer-card.green { border-color: #22c55e; }
+.printer-card.yellow { border-color: #facc15; }
+.printer-card.red { border-color: #ef4444; }
+
+.printer-card h3 {
+  margin: 0 0 10px;
+  color: #60a5fa;
+}
+
+.printer-card p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Orders Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #020617;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead {
+  background: #1e293b;
+}
+
+thead th {
+  padding: 12px;
+  text-align: left;
+  color: #93c5fd;
+  font-size: 14px;
+}
+
+tbody td {
+  padding: 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #1e293b;
+}
+
+tbody tr:hover {
+  background: #020617;
+}
+
+/* Order Status Colors */
+.status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.queued { background: #facc15; color: #000; }
+.status.printing { background: #3b82f6; color: #fff; }
+.status.done { background: #22c55e; color: #fff; }
+.status.failed { background: #ef4444; color: #fff; }
+
+/* Print Panel */
+#printView iframe {
+  width: 100%;
+  height: 80vh;
+  border-radius: 12px;
+  border: 2px solid #1e293b;
+  background: white;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

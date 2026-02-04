@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SecurePayToPrint – Machine</title>
+  <link rel="stylesheet" href="machine.css">
+</head>
+<body>
+
+<div class="mobile-frame">
+
+  <!-- Back Button (hidden on QR, shown on selection & success) -->
+  <button id="backBtn" class="back-btn" style="display:none;">⬅</button>
+
+  <!-- ================= QR SCREEN ================= -->
+  <div class="glass-card active" id="qrSection">
+    <h2 class="title">Scan to Upload</h2>
+
+    <div class="qr-box">
+      <div id="qrCode"></div>
+    </div>
+
+    <p class="hint">
+      Scan this QR using your phone to upload your document.  
+      Files are deleted immediately after printing.
+    </p>
+  </div>
+
+  <!-- ================= OPTIONS SCREEN ================= -->
+  <div class="glass-card" id="optionsSection">
+    <h2 class="title">Print Settings</h2>
+
+    <div class="info-box">
+      <p><b>File:</b> <span id="fileNameText">---</span></p>
+      <p><b>Pages:</b> <span id="detectedPages">0</span></p>
+      <p><b>To Print:</b> <span id="printPages">0</span></p>
+    </div>
+
+    <div class="radio-group">
+      <label class="radio-card">
+        <input type="radio" name="printType" value="bw" checked>
+        <span>🖤 Black & White</span>
+        <small>₹1 / page</small>
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="printType" value="color">
+        <span>🎨 Color Print</span>
+        <small>₹3 / page</small>
+      </label>
+    </div>
+
+    <div class="copies-box">
+      <label>Copies</label>
+      <input type="number" id="copiesInput" value="1" min="1" max="10">
+    </div>
+
+    <div class="amount-box">
+      Total: ₹<span id="totalAmount">0</span>
+    </div>
+
+    <button id="proceedBtn" class="action-btn">Proceed to Pay</button>
+  </div>
+
+  <!-- ================= SUCCESS SCREEN ================= -->
+  <div class="glass-card" id="successSection">
+    <h2 class="title">Payment Done</h2>
+    <p class="success-text">🖨 Printing started…</p>
+    <p class="success-text">Please collect your printout.</p>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="machine.js"></script>
+</body>
+</html>
