@@ -32,79 +32,82 @@ function generateUploadQR() {
     text: uploadURL,
     width: 180,
     height: 180,
-    colorDark: "#5ef3c5",     // neon mint (matches UI)
-    colorLight: "#0b1a2a",
+
+    colorDark: "#000000",
+    colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
 }
 
-// ================= UI HELPERS =================
-function switchScreen(showEl) {
-  [qrSection, optionsSection, successSection].forEach(el => {
-    el.classList.remove("active");
-  });
 
-  setTimeout(() => {
-    showEl.classList.add("active");
-  }, 80);
-}
-
-// ================= UI SCREENS =================
+// ================= UI CONTROL =================
 function showQRScreen() {
-  switchScreen(qrSection);
+  qrSection.classList.add("active");
+  optionsSection.classList.remove("active");
+  successSection.classList.remove("active");
+
+
   backBtn.style.display = "none";
   currentSession = null;
 }
 
 function showOptionsScreen(session) {
-  switchScreen(optionsSection);
+
+  qrSection.classList.remove("active");
+  optionsSection.classList.add("active");
+  successSection.classList.remove("active");
+
   backBtn.style.display = "block";
 
+  // Set values
   fileNameText.innerText = session.fileName || "Unknown File";
   detectedPagesText.innerText = session.pages;
   printPagesText.innerText = session.pages;
 
+
+  // Enforce 150 page limit
   if (session.pages > 150) {
-    alert("Maximum 150 pages allowed per print job.");
+    alert("Maximum 150 pages allowed per print job. Please upload a smaller file.");
+
     showQRScreen();
     return;
   }
 
-  calculateAmount(true);
+
+  calculateAmount();
 }
 
 function showSuccessScreen() {
-  switchScreen(successSection);
+  qrSection.classList.remove("active");
+  optionsSection.classList.remove("active");
+  successSection.classList.add("active");
+
   backBtn.style.display = "block";
 }
 
 // ================= AMOUNT CALCULATION =================
-function bumpAmount() {
-  totalAmountText.classList.remove("bump");
-  void totalAmountText.offsetWidth; // reflow
-  totalAmountText.classList.add("bump");
-}
 
-function calculateAmount(animate = false) {
+function calculateAmount() {
+
   const pages = Number(detectedPagesText.innerText);
   const copies = Number(copiesInput.value);
   const type = document.querySelector("input[name='printType']:checked").value;
 
-  const pricePerPage = type === "bw" ? 1 : 3;
-  const total = pages * copies * pricePerPage;
 
+  let pricePerPage = type === "bw" ? 1 : 3;
+
+  const total = pages * copies * pricePerPage;
   totalAmountText.innerText = total;
 
-  if (animate) bumpAmount();
 }
 
 // ================= BACK BUTTON =================
 backBtn.addEventListener("click", async () => {
-  try {
-    await fetch(`${API_BASE}/reset-session`, { method: "POST" });
-  } catch {}
+
+  await fetch(`${API_BASE}/reset-session`, { method: "POST" });
   showQRScreen();
 });
+
 
 // ================= SESSION POLLING =================
 async function pollForSession() {
@@ -112,16 +115,18 @@ async function pollForSession() {
     const res = await fetch(`${API_BASE}/admin/sessions`);
     const sessions = await res.json();
 
-    if (!sessions || sessions.length === 0) return;
 
-    const latest = sessions[sessions.length - 1];
+    if (sessions.length > 0) {
+      const latest = sessions[sessions.length - 1];
 
-    if (!currentSession || currentSession.sessionId !== latest.sessionId) {
-      currentSession = latest;
-      showOptionsScreen(latest);
+      if (!currentSession || currentSession.sessionId !== latest.sessionId) {
+        currentSession = latest;
+        showOptionsScreen(latest);
+      }
     }
   } catch (err) {
-    console.error("Machine polling error:", err);
+    console.error("Unable to reach backend from machine:", err);
+
   }
 }
 
@@ -131,23 +136,34 @@ function startPolling() {
 
 // ================= EVENTS =================
 document.querySelectorAll("input[name='printType']").forEach(radio => {
-  radio.addEventListener("change", () => calculateAmount(true));
+
+  radio.addEventListener("change", calculateAmount);
 });
 
-copiesInput.addEventListener("input", () => calculateAmount(true));
+copiesInput.addEventListener("input", calculateAmount);
+
 
 proceedBtn.addEventListener("click", async () => {
   showSuccessScreen();
 
   setTimeout(async () => {
-    try {
-      await fetch(`${API_BASE}/reset-session`, { method: "POST" });
-    } catch {}
+
+    await fetch(`${API_BASE}/reset-session`, { method: "POST" });
     showQRScreen();
   }, 3000);
+
+  /*
+    REAL PAYMENT FLOW:
+    - Show QR
+    - Verify transaction
+    - Start printer
+    - Countdown based on pages
+  */
 });
 
-// ================= INIT =================
+
+
+// ================= INITIALIZE =================
 generateUploadQR();
 showQRScreen();
 startPolling();
